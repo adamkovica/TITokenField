@@ -1309,7 +1309,7 @@ CGPathRef CGPathCreateDisclosureIndicatorPath(CGPoint arrowPointFront, CGFloat h
 	CGRect textBounds = CGRectMake(floorf(hTextPadding / 2), vPadding - 1, titleWidth, floorf(self.bounds.size.height - (vPadding * 2)));
 	
 	CGContextSetFillColorWithColor(context, (drawHighlighted ? _highlightedTextColor : _textColor).CGColor);
-    [_title drawInRect:textBounds withAttributes:@{@"font": _font}];
+    [_title drawInRect:textBounds withAttributes:@{NSFontAttributeName: _font}];
 }
 
 CGPathRef CGPathCreateTokenPath(CGSize size, BOOL innerPath) {
