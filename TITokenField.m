@@ -251,9 +251,6 @@
 
 - (void)tokenFieldTextDidChange:(TITokenField *)field {
     [self resultsForSearchString:_tokenField.text];
-    
-    if (_forcePickSearchResult) [self setSearchResultsVisible:YES];
-	else [self setSearchResultsVisible:(_resultsArray.count > 0)];
 }
 
 - (void)tokenFieldFrameWillChange:(TITokenField *)field {
@@ -394,6 +391,9 @@
         }
         [self performSelectorOnMainThread:@selector(reloadResultsTable) withObject:nil waitUntilDone:YES];
     }
+    
+    if (_forcePickSearchResult) [self setSearchResultsVisible:YES];
+	else [self setSearchResultsVisible:(_resultsArray.count > 0)];
 }
 
 
@@ -404,9 +404,7 @@
 
 - (void)presentpopoverAtTokenFieldCaretAnimated:(BOOL)animated {
 	
-    UITextPosition * position = [_tokenField positionFromPosition:_tokenField.beginningOfDocument offset:2];
-	
-	[_popoverController presentPopoverFromRect:[_tokenField caretRectForPosition:position]
+	[_popoverController presentPopoverFromRect:_tokenField.frame
                                         inView:_tokenField
 					 permittedArrowDirections:[self permittedArrowDirections]
                                       animated:animated];
