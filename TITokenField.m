@@ -312,8 +312,8 @@
 - (void)setSearchResultsVisible:(BOOL)visible {
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
 		
-		if (visible) [self presentpopoverAtTokenFieldCaretAnimated:YES];
-		else [_popoverController dismissPopoverAnimated:YES];
+		if (visible) [self presentpopoverAtTokenFieldCaretAnimated:NO];
+		else [_popoverController dismissPopoverAnimated:NO];
 	}
 	else
 	{
@@ -394,15 +394,19 @@
         }
         [self performSelectorOnMainThread:@selector(reloadResultsTable) withObject:nil waitUntilDone:YES];
     }
-    
-    if (_forcePickSearchResult) [self setSearchResultsVisible:YES];
-	else [self setSearchResultsVisible:(_resultsArray.count > 0)];
 }
 
 
 -(void) reloadResultsTable {
-  [_resultsTable setHidden:NO];
-  [_resultsTable reloadData];
+  
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        if (!_popoverController.isPopoverVisible) [self presentpopoverAtTokenFieldCaretAnimated:NO];
+    }
+    else {
+        [_resultsTable setHidden:NO];
+    }
+    
+    [_resultsTable reloadData];
 }
 
 - (void)presentpopoverAtTokenFieldCaretAnimated:(BOOL)animated {
