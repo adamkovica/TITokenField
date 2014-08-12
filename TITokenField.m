@@ -318,7 +318,7 @@
 	else
 	{
 		[_resultsTable setHidden:!visible];
-		[_tokenField setResultsModeEnabled:visible];
+		[_tokenField setResultsModeEnabled:YES];
 	}
 }
 
@@ -403,7 +403,9 @@
         if (!_popoverController.isPopoverVisible) [self presentpopoverAtTokenFieldCaretAnimated:NO];
     }
     else {
+        
         [_resultsTable setHidden:NO];
+        [_tokenField setResultsModeEnabled:YES];
     }
     
     [_resultsTable reloadData];
@@ -838,20 +840,15 @@ NSString * const kTextHidden = @"\u200D"; // Zero-Width Joiner
 	
 	[self layoutTokensAnimated:animated];
 	
-	if (_resultsModeEnabled != flag){
-		
-		//Hide / show the shadow
-		[self.layer setMasksToBounds:!flag];
-		
-		UIScrollView * scrollView = self.scrollView;
-		[scrollView setScrollsToTop:!flag];
-		[scrollView setScrollEnabled:!flag];
-		
-		CGFloat offset = ((_numberOfLines == 1 || !flag) ? 0 : _tokenCaret.y - floor(self.font.lineHeight * 4 / 7) + 1);
-		[scrollView setContentOffset:CGPointMake(0, self.frame.origin.y + offset) animated:animated];
-	}
-	
-	_resultsModeEnabled = flag;
+    //Hide / show the shadow
+    //[self.layer setMasksToBounds:!flag];
+    
+    UIScrollView * scrollView = self.scrollView;
+    [scrollView setScrollsToTop:!flag];
+    [scrollView setScrollEnabled:YES];
+    
+    CGFloat offset = ((_numberOfLines == 1 || !flag) ? 0 : _tokenCaret.y - floor(self.font.lineHeight * 4 / 7) + 1);
+    [scrollView setContentOffset:CGPointMake(0, self.frame.origin.y + offset) animated:animated];
 }
 
 #pragma mark Left / Right view stuff
