@@ -19,8 +19,8 @@
 
 @interface TITokenFieldView (Private)
 - (void)setup;
-- (NSString *)displayStringForRepresentedObject:(id)object;
-- (NSString *)searchResultStringForRepresentedObject:(id)object;
+- (NSAttributedString *)displayStringForRepresentedObject:(id)object;
+- (NSAttributedString *)searchResultStringForRepresentedObject:(id)object;
 - (void)setSearchResultsVisible:(BOOL)visible;
 - (void)resultsForSearchString:(NSString *)searchString;
 - (void)presentpopoverAtTokenFieldCaretAnimated:(BOOL)animated;
@@ -103,6 +103,9 @@
 		UITableViewController * tableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
 		[tableViewController.tableView setDelegate:self];
 		[tableViewController.tableView setDataSource:self];
+        [tableViewController.tableView setBackgroundColor:[UIColor blackColor]];
+        [tableViewController.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+        
         tableViewController.preferredContentSize = CGSizeMake(400, 400);
 		
 		_resultsTable = tableViewController.tableView;
@@ -235,7 +238,7 @@
     
     
     [cell.imageView setImage:[self searchResultImageForRepresentedObject:representedObject]];
-	[cell.textLabel setText:[self searchResultStringForRepresentedObject:representedObject]];
+	[cell.textLabel setAttributedText:[self searchResultStringForRepresentedObject:representedObject]];
 	[cell.detailTextLabel setText:subtitle];
 	
     return cell;
@@ -244,7 +247,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	
 	id representedObject = [_resultsArray objectAtIndex:indexPath.row];
-    TIToken * token = [[TIToken alloc] initWithTitle:[self displayStringForRepresentedObject:representedObject] representedObject:representedObject];
+    TIToken * token = [[TIToken alloc] initWithTitle:[self displayStringForRepresentedObject:representedObject].string representedObject:representedObject];
     [_tokenField addToken:token];
 	
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -282,20 +285,20 @@
 }
 
 #pragma mark Results Methods
-- (NSString *)displayStringForRepresentedObject:(id)object {
+- (NSAttributedString *)displayStringForRepresentedObject:(id)object {
 	
 	if ([_tokenField.delegate respondsToSelector:@selector(tokenField:displayStringForRepresentedObject:)]){
 		return [_tokenField.delegate tokenField:_tokenField displayStringForRepresentedObject:object];
 	}
 	
 	if ([object isKindOfClass:[NSString class]]){
-		return (NSString *)object;
+		return [[NSAttributedString alloc] initWithString:(NSString *)object];
 	}
 	
-	return [NSString stringWithFormat:@"%@", object];
+	return [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@", object]];
 }
 
-- (NSString *)searchResultStringForRepresentedObject:(id)object {
+- (NSAttributedString *)searchResultStringForRepresentedObject:(id)object {
 	
 	if ([_tokenField.delegate respondsToSelector:@selector(tokenField:searchResultStringForRepresentedObject:)]){
 		return [_tokenField.delegate tokenField:_tokenField searchResultStringForRepresentedObject:object];
@@ -370,7 +373,7 @@
     NSMutableArray * resultsToAdd = [[NSMutableArray alloc] init];
     [_sourceArray enumerateObjectsUsingBlock:^(id sourceObject, NSUInteger idx, BOOL *stop){
         
-        NSString * query = [self searchResultStringForRepresentedObject:sourceObject];
+        NSString * query = [self searchResultStringForRepresentedObject:sourceObject].string;
         NSString * querySubtitle = [self searchResultSubtitleForRepresentedObject:sourceObject];
         if (!querySubtitle || !_searchSubtitles) querySubtitle = @"";
         
@@ -402,7 +405,7 @@
     if (_resultsArray.count > 0) {
         if (_shouldSortResults) {
             [_resultsArray sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-                return [[self searchResultStringForRepresentedObject:obj1] localizedCaseInsensitiveCompare:[self searchResultStringForRepresentedObject:obj2]];
+                return [[self searchResultStringForRepresentedObject:obj1].string localizedCaseInsensitiveCompare:[self searchResultStringForRepresentedObject:obj2].string];
             }];
         }
         [self performSelectorOnMainThread:@selector(reloadResultsTable) withObject:nil waitUntilDone:YES];

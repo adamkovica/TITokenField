@@ -44,8 +44,8 @@
 - (void)tokenField:(TITokenField *)field performCustomSearchForSearchString:(NSString *)searchString withCompletionHandler:(void (^)(NSArray *results))completionHandler;
 
 - (void)tokenField:(TITokenField *)tokenField didFinishSearch:(NSArray *)matches;
-- (NSString *)tokenField:(TITokenField *)tokenField displayStringForRepresentedObject:(id)object;
-- (NSString *)tokenField:(TITokenField *)tokenField searchResultStringForRepresentedObject:(id)object;
+- (NSAttributedString *)tokenField:(TITokenField *)tokenField displayStringForRepresentedObject:(id)object;
+- (NSAttributedString *)tokenField:(TITokenField *)tokenField searchResultStringForRepresentedObject:(id)object;
 - (NSString *)tokenField:(TITokenField *)tokenField searchResultSubtitleForRepresentedObject:(id)object;
 - (UIImage *)tokenField:(TITokenField *)tokenField searchResultImageForRepresentedObject:(id)object;
 - (UITableViewCell *)tokenField:(TITokenField *)tokenField resultsTableView:(UITableView *)tableView cellForRepresentedObject:(id)object;
