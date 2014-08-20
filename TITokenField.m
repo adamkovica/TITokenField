@@ -1108,9 +1108,9 @@ CGPathRef CGPathCreateDisclosureIndicatorPath(CGPoint arrowPointFront, CGFloat h
 		_representedObject = object;
 		
 		_font = aFont;
-		_tintColor = [TIToken blueTintColor];
-		_textColor = [UIColor blackColor];
-		_highlightedTextColor = [UIColor whiteColor];
+		_tintColor = [TIToken globalTintColor];
+		_textColor = [UIColor whiteColor];
+		_highlightedTextColor = [TIToken globalTintColor];
 		
 		_accessoryType = TITokenAccessoryTypeNone;
 		_maxWidth = 200;
@@ -1161,7 +1161,7 @@ CGPathRef CGPathCreateDisclosureIndicatorPath(CGPoint arrowPointFront, CGFloat h
 
 - (void)setTintColor:(UIColor *)newTintColor {
 	
-	if (!newTintColor) newTintColor = [TIToken blueTintColor];
+	if (!newTintColor) newTintColor = [TIToken globalTintColor];
 	
 	if (_tintColor != newTintColor){
 		_tintColor = newTintColor;
@@ -1188,6 +1188,12 @@ CGPathRef CGPathCreateDisclosureIndicatorPath(CGPoint arrowPointFront, CGFloat h
 }
 
 #pragma Tint Color Convenience
+
++ (UIColor *)globalTintColor {
+    
+    //rgb(44,156,198)
+    return [UIColor colorWithRed:44.0f/255.0f green:156.0f/255.0f blue:198.0f/255.0f alpha:1.0f];
+}
 
 + (UIColor *)blueTintColor {
 	return [UIColor colorWithRed:0.216 green:0.373 blue:0.965 alpha:1];
@@ -1237,20 +1243,18 @@ CGPathRef CGPathCreateDisclosureIndicatorPath(CGPoint arrowPointFront, CGFloat h
 	CGFloat green = 1;
 	CGFloat blue = 1;
 	CGFloat alpha = 1;
-	[self getTintColorRed:&red green:&green blue:&blue alpha:&alpha];
 	
-	if (drawHighlighted){
-		CGContextSetFillColor(context, (CGFloat[4]){red, green, blue, 1});
+    if (drawHighlighted){
+        
+        CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
 		CGContextFillPath(context);
 	}
 	else
 	{
-		CGContextClip(context);
-		CGFloat locations[2] = {0, 0.95};
-		CGFloat components[8] = {red + 0.2, green + 0.2, blue + 0.2, alpha, red, green, blue, 0.8};
-		CGGradientRef gradient = CGGradientCreateWithColorComponents(colorspace, components, locations, 2);
-		CGContextDrawLinearGradient(context, gradient, CGPointZero, endPoint, 0);
-		CGGradientRelease(gradient);
+        [self getTintColorRed:&red green:&green blue:&blue alpha:&alpha];
+        
+        CGContextSetFillColor(context, (CGFloat[4]){red, green, blue, 1});
+		CGContextFillPath(context);
 	}
 	
 	CGContextRestoreGState(context);
@@ -1258,11 +1262,11 @@ CGPathRef CGPathCreateDisclosureIndicatorPath(CGPoint arrowPointFront, CGFloat h
 	CGPathRef innerPath = CGPathCreateTokenPath(self.bounds.size, YES);
     
     // Draw a white background so we can use alpha to lighten the inner gradient
-    CGContextSaveGState(context);
-	CGContextAddPath(context, innerPath);
-    CGContextSetFillColor(context, (CGFloat[4]){1, 1, 1, 1});
-    CGContextFillPath(context);
-    CGContextRestoreGState(context);
+    //    CGContextSaveGState(context);
+    //	CGContextAddPath(context, innerPath);
+    //    CGContextSetFillColor(context, (CGFloat[4]){1, 1, 1, 1});
+    //    CGContextFillPath(context);
+    //    CGContextRestoreGState(context);
 	
 	// Draw the inner gradient.
 	CGContextSaveGState(context);
@@ -1270,14 +1274,14 @@ CGPathRef CGPathCreateDisclosureIndicatorPath(CGPoint arrowPointFront, CGFloat h
 	CGPathRelease(innerPath);
 	CGContextClip(context);
 	
-	CGFloat locations[2] = {0, (drawHighlighted ? 0.9 : 0.6)};
+    //	CGFloat locations[2] = {0, (drawHighlighted ? 0.9 : 0.6)};
     CGFloat highlightedComp[8] = {red, green, blue, 0.7, red, green, blue, 1};
-    CGFloat nonHighlightedComp[8] = {red, green, blue, 0.15, red, green, blue, 0.3};
+    //    CGFloat nonHighlightedComp[8] = {red, green, blue, 0.15, red, green, blue, 0.3};
 	
-	CGGradientRef gradient = CGGradientCreateWithColorComponents(colorspace, (drawHighlighted ? highlightedComp : nonHighlightedComp), locations, 2);
-	CGContextDrawLinearGradient(context, gradient, CGPointZero, endPoint, 0);
-	CGGradientRelease(gradient);
-	CGContextRestoreGState(context);
+    //	CGGradientRef gradient = CGGradientCreateWithColorComponents(colorspace, (drawHighlighted ? highlightedComp : nonHighlightedComp), locations, 2);
+    //	CGContextDrawLinearGradient(context, gradient, CGPointZero, endPoint, 0);
+    //	CGGradientRelease(gradient);
+    //	CGContextRestoreGState(context);
 	
 	CGFloat accessoryWidth = 0;
 	
@@ -1326,8 +1330,7 @@ CGPathRef CGPathCreateDisclosureIndicatorPath(CGPoint arrowPointFront, CGFloat h
 	CGFloat titleWidth = ceilf(self.bounds.size.width - hTextPadding - accessoryWidth);
 	CGRect textBounds = CGRectMake(floorf(hTextPadding / 2), vPadding - 1, titleWidth, floorf(self.bounds.size.height - (vPadding * 2)));
 	
-	CGContextSetFillColorWithColor(context, (drawHighlighted ? _highlightedTextColor : _textColor).CGColor);
-    [_title drawInRect:textBounds withAttributes:@{NSFontAttributeName: _font}];
+    [_title drawInRect:textBounds withAttributes:@{NSFontAttributeName: _font,NSForegroundColorAttributeName: drawHighlighted ? _highlightedTextColor : _textColor}];
 }
 
 CGPathRef CGPathCreateTokenPath(CGSize size, BOOL innerPath) {
