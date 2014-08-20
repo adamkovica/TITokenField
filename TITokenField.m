@@ -230,9 +230,11 @@
         cell.contentView.backgroundColor = [UIColor colorWithWhite:0.1f alpha:1.0f];
         ///44, 156, 198
         UIView *selectedBackgroundView = [[UIView alloc] initWithFrame:cell.bounds];
-        selectedBackgroundView.backgroundColor = [UIColor colorWithRed:44.0f/255.0f green:156.0f/255.0f blue:198.0f/255.0f alpha:1.0f];
+        selectedBackgroundView.backgroundColor = [UIColor darkGrayColor]; //[UIColor colorWithRed:44.0f/255.0f green:156.0f/255.0f blue:198.0f/255.0f alpha:1.0f];
         
         cell.selectedBackgroundView = selectedBackgroundView;
+        
+        cell.textLabel.highlightedTextColor = [UIColor whiteColor];
     }
 	
     
