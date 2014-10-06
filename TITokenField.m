@@ -141,11 +141,6 @@
 	[_contentView setFrame:((CGRect){_contentView.frame.origin, {width, (frame.size.height - CGRectGetMaxY(_tokenField.frame))}})];
 	[_tokenField setFrame:((CGRect){_tokenField.frame.origin, {width, _tokenField.bounds.size.height}})];
 	
-	if (_popoverController.popoverVisible){
-		[_popoverController dismissPopoverAnimated:NO];
-		[self presentpopoverAtTokenFieldCaretAnimated:NO];
-	}
-	
 	[self updateContentSize];
 	[self setNeedsLayout];
 }
